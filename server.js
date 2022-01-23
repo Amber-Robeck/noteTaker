@@ -23,61 +23,12 @@ app.get('/notes', (req, res) =>
     res.sendFile(path.join(__dirname, '/public/notes.html'))
 );
 
-// // api route for notes
-// app.get('/api/notes', (req, res) => {
-//     console.info(`${req.method} request received for notes`);
-//     console.log(`${req.method}`);
-//     fs.readFile('./db/db.json').then((data) => res.json(JSON.parse(data)));
-//     console.log(res.json(JSON.parse(data)))
-
-// });
-
-// // api post route for notes
-// app.post('/api/notes', (req, res) => {
-//     console.info(`${req.method} request received to add a note`);
-//     console.log(req.body);
-
-//     let { title, text } = req.body;
-//     const note = {
-//         title,
-//         text,
-//         // note_id: uuid(),
-//     };
-//     fs.readFile("./db/db.json", 'utf8', (err, data) => {
-//         if (err) {
-//             console.log(err);
-//         } else {
-//             const oldNote = JSON.parse(data);
-//             oldNote.push(note);
-//             fs.writeFile("./db/db.json", JSON.stringify(oldNote))
-//         }
-
-//     })
-// });
-
-// app.listen(PORT, () =>
-//     console.log(`App listening at http://localhost:${PORT} 🚀`)
-// );
-
-
-
-
-// const writeIntoFile = util.promisify(fs.writeFile);
-// const readFromFile = (filePath, content, res) => {
-//     fs.readFile(filePath, 'utf8', (err, data) => {
-//         if (err) throw err;
-//         var stuData = JSON.parse(data);
-//         stuData.push(content);
-
-//         writeIntoFile(filePath, JSON.stringify(stuData))
-//             .catch(err => console.log(err))
-//             .then(() => { console.log("data") })
-//     })
-// }
+const readFromFile = util.promisify(fs.readFile);
 
 app.get('/api/notes', (req, res) => {
+
     // Send a message to the client
-    res.status(200).json(`${req.method} request received to get notes`);
+    readFromFile('./db/db.json').then((data) => res.json(JSON.parse(data)));
 
     // Log our request to the terminal
     console.info(`${req.method} request received to get notes`);
