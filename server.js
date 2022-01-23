@@ -2,7 +2,8 @@ const express = require("express")
 const path = require('path');
 const fs = require("fs");
 const util = require('util');
-const db = require("./db/db.json")
+const db = require("./db/db.json");
+const uuid = require("./helpers/uuid");
 const PORT = process.env.PORT || 3001;
 const app = express();
 
@@ -29,6 +30,7 @@ app.get('/api/notes', (req, res) => {
 
     // Send a message to the client
     readFromFile('./db/db.json').then((data) => res.json(JSON.parse(data)));
+    // res.json(db);
 
     // Log our request to the terminal
     console.info(`${req.method} request received to get notes`);
@@ -40,7 +42,7 @@ app.post('/api/notes', (req, res) => {
     console.info(`${req.method} request received to add a notes`);
 
     // Destructuring assignment for the items in req.body
-    const { title, text } = req.body;
+    const { title, text, id } = req.body;
 
     // If all the required properties are present
     if (title && text) {
@@ -48,6 +50,7 @@ app.post('/api/notes', (req, res) => {
         const newNote = {
             title,
             text,
+            id: uuid()
         };
 
         // Obtain existing reviews
