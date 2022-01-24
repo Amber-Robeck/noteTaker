@@ -58,15 +58,17 @@ app.post('/notes', (req, res) => {
                 // Add a new review
                 parsedNotes.push(newNote);
 
+
                 // Write updated reviews back to the file
-                fs.writeFile(
-                    filename,
-                    JSON.stringify(parsedNotes),
-                    (writeErr) =>
-                        writeErr
-                            ? console.error(writeErr)
-                            : console.info('Successfully updated notes!')
-                );
+                writeNote(filename, parsedNotes)
+                // fs.writeFile(
+                //     filename,
+                //     JSON.stringify(parsedNotes),
+                //     (writeErr) =>
+                //         writeErr
+                //             ? console.error(writeErr)
+                //             : console.info('Successfully updated notes!')
+                // );
             }
         });
 
