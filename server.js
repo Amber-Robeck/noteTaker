@@ -7,14 +7,15 @@ const uuid = require("./helpers/uuid");
 const PORT = process.env.PORT || 3001;
 const app = express();
 const writeNote = require("./helpers/helpers")
+const api = require('./routes/index.js');
 
 
 // Middleware for parsing JSON and urlencoded form data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-
 app.use(express.static('public'));
+app.use('/api', api);
+
 
 // GET Route for homepage
 app.get('/', (req, res) =>
@@ -25,104 +26,124 @@ app.get('/notes', (req, res) =>
     res.sendFile(path.join(__dirname, '/public/notes.html'))
 );
 
-const readFromFile = util.promisify(fs.readFile);
+// app.use("/api", api)
 
-app.get('/api/notes', (req, res) => {
+// const readFromFile = util.promisify(fs.readFile);
 
-    // Send a message to the client
-    readFromFile('./db/db.json').then((data) => res.json(JSON.parse(data)));
-    // res.json(db);
+// app.get('/api/notes', (req, res) => {
 
-    // Log our request to the terminal
-    console.info(`${req.method} request received to get notes`);
-});
+//     // Send a message to the client
+//     readFromFile('./db/db.json').then((data) => res.json(JSON.parse(data)));
+//     // res.json(db);
 
-// POST request to add a review
-app.post('/api/notes', (req, res) => {
-    // Log that a POST request was received
-    console.info(`${req.method} request received to add a notes`);
+//     // Log our request to the terminal
+//     console.info(`${req.method} request received to get notes`);
+// });
 
-    // Destructuring assignment for the items in req.body
-    const { title, text, id } = req.body;
+// // POST request to add a review
+// app.post('/api/notes', (req, res) => {
+//     // Log that a POST request was received
+//     console.info(`${req.method} request received to add a notes`);
 
-    // If all the required properties are present
-    if (title && text) {
-        // new object to save data
-        const newNote = {
-            title,
-            text,
-            id: uuid()
-        };
+//     // Destructuring assignment for the items in req.body
+//     const { title, text, id } = req.body;
 
-        // Obtain existing notes
-        fs.readFile('./db/db.json', 'utf8', (err, data) => {
-            if (err) {
-                console.error(err);
-            } else {
-                // Convert string into JSON object
-                const parsedNotes = JSON.parse(data);
+//     // If all the required properties are present
+//     if (title && text) {
+//         // new object to save data
+//         const newNote = {
+//             title,
+//             text,
+//             id: uuid()
+//         };
 
-                // Add a new review
-                parsedNotes.push(newNote);
+//         // Obtain existing notes
+//         fs.readFile('./db/db.json', 'utf8', (err, data) => {
+//             if (err) {
+//                 console.error(err);
+//             } else {
+//                 // Convert string into JSON object
+//                 const parsedNotes = JSON.parse(data);
 
-                // Write updated reviews back to the file
-                fs.writeFile(
-                    './db/db.json',
-                    JSON.stringify(parsedNotes),
-                    (writeErr) =>
-                        writeErr
-                            ? console.error(writeErr)
-                            : console.info('Successfully updated notes!')
-                );
-            }
-        });
+//                 // Add a new review
+//                 parsedNotes.push(newNote);
 
-        const response = {
-            status: 'success',
-            body: newNote,
-        };
+//                 // Write updated reviews back to the file
+//                 fs.writeFile(
+//                     './db/db.json',
+//                     JSON.stringify(parsedNotes),
+//                     (writeErr) =>
+//                         writeErr
+//                             ? console.error(writeErr)
+//                             : console.info('Successfully updated notes!')
+//                 );
+//             }
+//         });
 
-        console.log(response);
-        res.status(201).json(response);
-    } else {
-        res.status(500).json('Error in posting note');
-    }
-});
+//         const response = {
+//             status: 'success',
+//             body: newNote,
+//         };
 
-app.delete('/api/notes/:id', (req, res) => {
-    console.log(req.params)
+//         console.log(response);
+//         res.status(201).json(response);
+//     } else {
+//         res.status(500).json('Error in posting note');
+//     }
+// });
 
-    //reading current list of notes
-    fs.readFile('./db/db.json', 'utf8', (err, data) => {
-        if (err) {
-            console.error(err);
-        } else {
-            // Convert string into JSON object
-            const parsedNotes = JSON.parse(data);
+// app.delete('/api/notes/:id', (req, res) => {
+//     console.log(req.params)
 
-            for (let i = 0; i < parsedNotes.length; i++) {
+//     // readFromFile('./db/db.json')
+//     //     .then((data) => {
+//     //         const parsedNotes = JSON.parse(data);
 
-                if (parsedNotes[i].id == req.params.id) {
-                    // Splice on index position, and then deletes 1 at that index
-                    parsedNotes.splice(i, 1);
-                }
-            }
+//     //         for (let i = 0; i < parsedNotes.length; i++) {
+
+//     //             if (parsedNotes[i].id == req.params.id) {
+//     //                 // Splice on index position, and then deletes 1 at that index
+//     //                 parsedNotes.splice(i, 1);
+//     //             }
+//     //         }
+//     //     })
+//     //     .then(
+//     // // res.json(JSON.parse(data)
 
 
-            // Write deleted notes back to the file
-            writeNote("./db/db.json", parsedNotes);
-            // fs.writeFile(
-            //     './db/db.json',
-            //     JSON.stringify(parsedNotes),
-            //     (writeErr) =>
-            //         writeErr
-            //             ? console.error(writeErr)
-            //             : console.info('Successfully deleted notes!')
-            // );
-        }
-    });
-    //this is working however, only on page refresh
-});
+//     // reading current list of notes
+//     fs.readFile('./db/db.json', 'utf8', (err, data) => {
+//         if (err) {
+//             console.error(err);
+//         } else {
+//             // Convert string into JSON object
+//             const parsedNotes = JSON.parse(data);
+
+//             for (let i = 0; i < parsedNotes.length; i++) {
+
+//                 if (parsedNotes[i].id == req.params.id) {
+//                     // Splice on index position, and then deletes 1 at that index
+//                     parsedNotes.splice(i, 1);
+//                 }
+//             }
+
+
+//             // Write deleted notes back to the file
+//             // fs.writeFile(
+//             //     './db/db.json',
+//             //     JSON.stringify(parsedNotes),
+//             //     (writeErr) =>
+//             //         writeErr
+//             //             ? console.error(writeErr)
+//             //             : console.info('Successfully deleted notes!')
+//             // );
+//             // }
+//             // });
+//             //this is working however, only on page refresh
+//             writeNote("./db/db.json", parsedNotes);
+//         }
+//     })
+// });
 
 
 ///listen to port
