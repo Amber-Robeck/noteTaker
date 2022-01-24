@@ -21,6 +21,11 @@ app.get('/notes', (req, res) =>
     res.sendFile(path.join(__dirname, '/public/notes.html'))
 );
 
+// GET Route for homepage if anything else is typed
+app.get('*', (req, res) =>
+    res.sendFile(path.join(__dirname, '/public/index.html'))
+);
+
 ///listen to port
 app.listen(PORT, () =>
     console.log(`App listening at http://localhost:${PORT} 🚀`)
