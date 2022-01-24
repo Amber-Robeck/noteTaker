@@ -6,6 +6,7 @@ const db = require("./db/db.json");
 const uuid = require("./helpers/uuid");
 const PORT = process.env.PORT || 3001;
 const app = express();
+const writeNote = require("./helpers/helpers")
 
 
 // Middleware for parsing JSON and urlencoded form data
@@ -109,14 +110,15 @@ app.delete('/api/notes/:id', (req, res) => {
 
 
             // Write deleted notes back to the file
-            fs.writeFile(
-                './db/db.json',
-                JSON.stringify(parsedNotes),
-                (writeErr) =>
-                    writeErr
-                        ? console.error(writeErr)
-                        : console.info('Successfully deleted notes!')
-            );
+            writeNote("./db/db.json", parsedNotes);
+            // fs.writeFile(
+            //     './db/db.json',
+            //     JSON.stringify(parsedNotes),
+            //     (writeErr) =>
+            //         writeErr
+            //             ? console.error(writeErr)
+            //             : console.info('Successfully deleted notes!')
+            // );
         }
     });
     //this is working however, only on page refresh
